@@ -155,7 +155,7 @@
             <div style="margin-bottom: 2rem; margin-top:2rem;">
                 <a href="{{ route('home') }}" class="return">Voltar</a>
             </div>
-            
+
             @if (!empty($errorMessages))
             <div class="alert alert-danger">
                 <ul>
@@ -233,7 +233,13 @@
                             </div>
                         </td>
 
-                        <td style="color: black; font-weight: bold;font-size: x-large;padding-top: 1.5rem;">{{ $rotacao->animais }}</td>
+                        <td style="font-weight: bold; font-size: x-large; padding-top: 1.5rem; color: {{ ($rotacao->animais === '[]' || $rotacao->animais === '') ? 'red' : 'black' }}">
+                            @if ($rotacao->animais === '[]')
+                            Pastagem em recuperação
+                            @else
+                            {{ str_replace(['[', ']'], '', $rotacao->animais) }}
+                            @endif
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

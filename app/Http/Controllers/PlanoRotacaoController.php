@@ -53,12 +53,8 @@ class PlanoRotacaoController extends Controller
                         }
                         $pastagem->save();
                     }
-
-                //dump($pastagem->id ." - " .$pastagem->forragem_disponivel);
                 }
             }
-
-            //dump($this->animal_sem_pasto);
 
             //!ALOCA ANIMAIS SEM PASTO
             if (!empty($this->animal_sem_pasto) && ($i != 0)) {
@@ -122,8 +118,6 @@ class PlanoRotacaoController extends Controller
     }
     private function rotacionar($pastagem, $dia)
     {
-        $plano_rotacao_existente = $this->buscaPastoDiaEmPlanoRotacao($pastagem->id, $dia);
-        $animais = $this->getIdAnimal($plano_rotacao_existente);
         //!Degradaçao
         $degradacao = $this->verificarDegradacaoPastagem($pastagem->forragem_disponivel);
         while ($degradacao == true) {
@@ -132,20 +126,20 @@ class PlanoRotacaoController extends Controller
         }
 
         //!Nao suporte 
+        $plano_rotacao_existente = $this->buscaPastoDiaEmPlanoRotacao($pastagem->id, $dia);
+        $animais = $this->getIdAnimal($plano_rotacao_existente);
         $nao_suporte = $this->verificaNaoSuportePastagem($animais, $pastagem);
         while ($nao_suporte == true) {
             $this->retirarAnimal($pastagem, $dia, "asc");
             $nao_suporte = $this->verificaNaoSuportePastagem($animais, $pastagem);
         }
-        $this->excluiPlanoRotacacaoSemAnimal($pastagem->id, $dia);
     }
     private function retirarAnimal($pastagem, $dia, $sort)
     {
         $plano_rotacao_existente = $this->buscaPastoDiaEmPlanoRotacao($pastagem->id, $dia);
-       
+
         if ($plano_rotacao_existente) {
             $animais = $this->getIdAnimal($plano_rotacao_existente);
-    
             if ($animais->isNotEmpty()) {
                 $animaisOrdenados = $sort == "desc" ? $animais->sortByDesc('necessidade_nutricional') : $animais->sortBy('necessidade_nutricional');
                 $primeiroAnimal = $animaisOrdenados->first();
@@ -155,10 +149,8 @@ class PlanoRotacaoController extends Controller
                     $animaisJson = array_diff($animaisJson, [$primeiroAnimalId]);
                     $plano_rotacao_existente->animais = json_encode(array_values($animaisJson));
                     $plano_rotacao_existente->qtd_animal = count($animaisJson);
-
                     $animal = Animal::find($primeiroAnimalId);
                     $pastagem->forragem_disponivel += $animal->necessidade_nutricional;
-
                     $plano_rotacao_existente->forragem_disponivel = round(($pastagem->forragem_disponivel * 100) / $pastagem->quantidade_forragem, 2);
                     $plano_rotacao_existente->save();
                     $this->addAnimalSemPasto($primeiroAnimalId);
@@ -173,17 +165,6 @@ class PlanoRotacaoController extends Controller
     private function esvaziaAnimalSemPasto()
     {
         $this->animal_sem_pasto[] = array();
-    }
-    private function excluiPlanoRotacacaoSemAnimal($pastagem_id, $dia)
-    {
-        ModelsPlanoRotacao::where('dia', $dia)
-            ->where('pastagem_id', $pastagem_id)
-            ->where(function ($query) {
-                $query->whereNotNull('qtd_animal')
-                    ->orWhere('qtd_animal', '=', 0)
-                    ->orWhere('qtd_animal', '=', null);
-            })
-            ->delete();
     }
     private function procuraPasto($dia)
     {
@@ -218,7 +199,7 @@ class PlanoRotacaoController extends Controller
                 }
             }
             foreach ($errorMessages as $dia => $animals) {
-                $animalsWithError = implode(', ', array_unique($animals)); 
+                $animalsWithError = implode(', ', array_unique($animals));
                 $this->errorMessages[$dia] = "Dia $dia - Impossível rotacionar animal: $animalsWithError. Verifique forragem e capacidade de suporte das Pastagens.";
             }
         }
@@ -246,15 +227,25 @@ class PlanoRotacaoController extends Controller
     private function recuperaPastagem($dia)
     {
         $planoRotacao = ModelsPlanoRotacao::where('dia', $dia)->get();
-        $pastagensEmUso = $planoRotacao->pluck('pastagem_id')->toArray();
-        $pastagensNaoEmUso = Pastagem::whereNotIn('id', $pastagensEmUso)->get();
+        if ($planoRotacao->isNotEmpty()) {
+            foreach ($planoRotacao as $plano) {
+                if ($plano->qtd_animal == 0) {
+                    $pastagensNaoEmUso = Pastagem::where('id', $plano->pastagem_id)->get();
+                    foreach ($pastagensNaoEmUso as $pasto) {
+                        if ($pasto->forragem_disponivel < $pasto->quantidade_forragem) {
+                            $recuperacaoDiaria = $pasto->quantidade_forragem / $pasto->dias_recuperacao;
+                            $pasto->forragem_disponivel += $recuperacaoDiaria;
+                            $forragem_disponivel_pasto = $pasto->forragem_disponivel;
+                            $pasto->save();
 
-        foreach ($pastagensNaoEmUso as $pasto) {
-            if ($pasto->forragem_disponivel < $pasto->quantidade_forragem) {
-                $recuperacaoDiaria = $pasto->quantidade_forragem / $pasto->dias_recuperacao;
-                $pasto->forragem_disponivel += $recuperacaoDiaria;
-                $pasto->save();
+                            $plano_rotacao = $this->buscaPastoDiaEmPlanoRotacao($pasto->id, $dia);
+                            $plano_rotacao->forragem_disponivel = round(($forragem_disponivel_pasto * 100) / $pasto->quantidade_forragem, 2);
+                            $plano_rotacao->save();
+                        }
+                    }
+                }
             }
         }
     }
+
 }
