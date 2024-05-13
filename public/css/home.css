@@ -1,0 +1,130 @@
+body {
+    background-color: #f0f8ff !important;
+}
+
+.navbar {
+    background-color: #ffffff !important;
+    box-shadow: 0px 4px 6px rgba(195, 195, 195, 0.1);
+}
+
+.logout-button {
+    margin-top: 3px;
+    border: 2px solid #4c4c4c;
+    padding: 4px 14px 4px 14px !important;
+    border-radius: 5px;
+    background-color: #92e5ff;
+}
+
+.navbar-brand {
+    color: #000000;
+    margin-right: 1rem !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.navbar-brand img {
+    max-height: 40px;
+    opacity: 0.65;
+    margin-right: 1rem !important;
+}
+
+h4 {
+    margin: 0rem !important;
+    padding: 0rem!important;
+}
+
+.navbar-nav .nav-link {
+    color: #353535 !important;
+}
+
+.navbar>.container-fluid{
+    display: flex;
+    flex-wrap: inherit;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0rem 2rem;
+}
+
+.nav-link{
+    padding-right: 1em !important;
+    font-weight: 450 !important;
+    color: #2b2b2b !important;
+}
+
+h1{
+    margin-bottom: 2rem !important;
+}
+
+h2,h1{
+    display: flex;
+    font-weight: bolder !important;
+    justify-content: center;
+}
+
+h3{
+    display: flex;
+    justify-content: center;
+    font-size: 1.3rem !important;
+}
+
+.overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: rgb(0, 0, 0);
+}
+
+.container-fluid.bg-white.rounded.p-3 {
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+}
+
+.container.mt-3rem {
+    margin-bottom: 5rem;
+}
+
+.mt-2rem {
+    margin-top: 2rem;
+}
+
+.col-md-4.text-center {
+    margin-top: 3rem;
+}
+
+.bg-dark.p-4.rounded.imagem-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.img-fluid.imagem {
+    width: 100%;
+    height: 300px;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+}
+
+.img-fluid.imagem:hover {
+    transform: scale(1.1);
+}
+
+.imagem-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(175, 175, 175, 0.325);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.imagem-container:hover .imagem-overlay {
+    opacity: 1;
+}
+
+.imagem-overlay:hover {
+    cursor: pointer;
+}
