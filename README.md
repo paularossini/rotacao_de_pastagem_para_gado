@@ -21,18 +21,23 @@
     -E melhor utilisar numeros pares para a verificação da rotaçao
 
     - PASTAGEM:
-    capacidade_suporte: 1 | quantidade_forragem: 30 | dias_recuperacao: 3 
+    capacidade_suporte: 1 | quantidade_forragem: 50 | dias_recuperacao: 5 
 
-    capacidade_suporte: 2 | quantidade_forragem: 80 | dias_recuperacao: 4
+    capacidade_suporte: 2 | quantidade_forragem: 30 | dias_recuperacao: 3
 
-    capacidade_suporte: 3 | quantidade_forragem: 60 | dias_recuperacao: 3
+    capacidade_suporte: 3 | quantidade_forragem: 80 | dias_recuperacao: 8
+    
+    capacidade_suporte: 4 | quantidade_forragem: 20 | dias_recuperacao: 2
 
     - ANIMAL:
-    peso: 200 | idade: 5 | necessidade_nutricional: 6 | pastagem_atual: 1
+    peso: 500 | idade: 20 | necessidade_nutricional: 20 | pastagem_atual: 3
 
-    peso: 280 | idade: 6 | necessidade_nutricional: 9 | pastagem_atual: 1
+    peso: 250 | idade: 7 | necessidade_nutricional: 6 | pastagem_atual: 1
 
-    peso: 500 | idade: 18 | necessidade_nutricional: 15 | pastagem_atual: 3
+    peso: 220 | idade: 8 | necessidade_nutricional: 6 | pastagem_atual: 1
+    
+    peso: 400 | idade: 13 | necessidade_nutricional: 15 | pastagem_atual: 2
+
 
 # ------------------------- LOGIGA DO PROGRAMA ------------------------
     - Para melhor mapeamento da rotaçao o objeto plano_rotacao foi criado. Ele guarda as informaçoes de: dia, pastagem_id, animais (animal_id que estão no pasto), qtd_animal (contagem de animais no pasto) e forragem_disponivel (degradaçao do pasto em %).
